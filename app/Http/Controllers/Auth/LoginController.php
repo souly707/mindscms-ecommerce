@@ -28,6 +28,24 @@ class LoginController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+
+    /**
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+     */
+    public function username()
+    {
+        return 'username';
+    }
+
+    public function redirectTo()
+    {
+        if (auth()->user()->roles()->first()->allowed_route != '') {
+            return $this->redirectTo = auth()->user()->roles()->first()->allowed_route . '/index';
+        }
+    }
+
     /**
      * Create a new controller instance.
      *
