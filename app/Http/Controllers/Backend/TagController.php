@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Backend\TagRequest;
+use App\Models\Tag;
 
 class TagController extends Controller
 {
@@ -14,7 +15,21 @@ class TagController extends Controller
      */
     public function index()
     {
-        return view('backend.tags.index');
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'manage_tags, show_tags')) {
+            return redirect('admin/index');
+        }
+        $tags = Tag::with('products')
+            ->when(request()->keyword != null, function ($query) {
+                $query->search(request()->keyword);
+            })
+            ->when(request()->status != null, function ($query) {
+                $query->whereStatus(request()->status);
+            })
+            ->orderBy(request()->sort_by ?? 'id', request()->order_by ?? 'desc')
+            ->paginate(request()->limt_by ?? 10);
+
+        return view('backend.tags.index', compact('tags'));
     }
 
     /**
@@ -24,6 +39,10 @@ class TagController extends Controller
      */
     public function create()
     {
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'create_tags')) {
+            return redirect('admin/index');
+        }
         return view('backend.tags.create');
     }
 
@@ -33,9 +52,20 @@ class TagController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TagRequest $request)
     {
-        //
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'create_tags')) {
+            return redirect('admin/index');
+        }
+
+        // Create the record in database
+        Tag::create($request->validated());
+
+        return \redirect()->route('admin.tags.index')->with([
+            'message' => 'Tag Created Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
     /**
@@ -46,6 +76,11 @@ class TagController extends Controller
      */
     public function show($id)
     {
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'display_tags')) {
+            return redirect('admin/index');
+        }
+
         return view('backend.tags.show');
     }
 
@@ -55,9 +90,14 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Tag $tag)
     {
-        return view('backend.tags.edit');
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'update_tags')) {
+            return redirect('admin/index');
+        }
+
+        return view('backend.tags.edit', compact('tag'));
     }
 
     /**
@@ -67,9 +107,23 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(TagRequest $request, Tag $tag)
     {
-        //
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'update_tags')) {
+            return redirect('admin/index');
+        }
+
+        $input['name']      = $request->name;
+        $input['slug']      = null;
+        $input['status']    = $request->status;
+
+        $tag->update($input);
+
+        return \redirect()->route('admin.tags.index')->with([
+            'message' => 'Tag Updated Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 
     /**
@@ -78,8 +132,18 @@ class TagController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Tag $tag)
     {
-        //
+        // Roles And Permissions Granted To View This Page
+        if (!auth()->user()->ability('admin', 'delete_tags')) {
+            return redirect('admin/index');
+        }
+
+        $tag->delete();
+
+        return \redirect()->route('admin.tags.index')->with([
+            'message' => 'Category Deleted Successfully',
+            'alert-type' => 'success'
+        ]);
     }
 }

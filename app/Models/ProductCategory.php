@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Cviebrock\EloquentSluggable\Sluggable;
+use Nicolaslopezj\Searchable\SearchableTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductCategory extends Model
 {
-    use HasFactory, Sluggable;
+    use HasFactory, Sluggable, SearchableTrait;
 
     protected $guarded = [];
 
@@ -25,6 +26,24 @@ class ProductCategory extends Model
             ]
         ];
     }
+
+    /**
+     * Searchable rules.
+     *
+     * @var array
+     */
+    protected $searchable = [
+        /**
+         * Columns and their priority in search results.
+         * Columns with higher values are more important.
+         * Columns with equal values have equal importance.
+         *
+         * @var array
+         */
+        'columns' => [
+            'product_categories.name' => 10,
+        ],
+    ];
 
     public function parent()
     {
@@ -53,5 +72,10 @@ class ProductCategory extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
+    }
+
+    public function status()
+    {
+        return $this->status ? 'Active' : 'Inactive';
     }
 }
