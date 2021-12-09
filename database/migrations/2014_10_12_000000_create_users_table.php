@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('mobile')->unique();
-            $table->timestamp('user_image')->nullable();
+            $table->string('user_image')->nullable();
             $table->unsignedTinyInteger('status')->default(0);
             $table->string('password');
             $table->rememberToken();

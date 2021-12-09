@@ -27,24 +27,19 @@ class ProductCategory extends Model
         ];
     }
 
-    /**
-     * Searchable rules.
-     *
-     * @var array
-     */
+    /** Searchable rules. **/
     protected $searchable = [
-        /**
-         * Columns and their priority in search results.
-         * Columns with higher values are more important.
-         * Columns with equal values have equal importance.
-         *
-         * @var array
-         */
         'columns' => [
             'product_categories.name' => 10,
         ],
     ];
 
+    public function status()
+    {
+        return $this->status ? 'Active' : 'Inactive';
+    }
+
+    /** @return \Illuminate\Database\Eloquent\Relations */
     public function parent()
     {
         return $this->hasOne(ProductCategory::class, 'id', 'parent_id');
@@ -72,10 +67,5 @@ class ProductCategory extends Model
     public function products()
     {
         return $this->hasMany(Product::class);
-    }
-
-    public function status()
-    {
-        return $this->status ? 'Active' : 'Inactive';
     }
 }

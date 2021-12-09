@@ -50,6 +50,11 @@ $current_page = \Route::currentRouteName();
     </li>
     @endif
     @endforeach
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
     @endrole
 
     @role(['supervisor'])
@@ -94,6 +99,10 @@ $current_page = \Route::currentRouteName();
     @endif
     @endpermission
     @endforeach
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
     @endrole
 
 </ul>

@@ -1,11 +1,19 @@
 <?php
 
-use App\Http\Controllers\Backend\BackendController;
-use App\Http\Controllers\Backend\ProductCategoriesController;
-use App\Http\Controllers\Backend\ProductController;
-use App\Http\Controllers\Backend\TagController;
-use App\Http\Controllers\Frontend\FrontendController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Backend\TagController;
+use App\Http\Controllers\Backend\BackendController;
+use App\Http\Controllers\Backend\cityController;
+use App\Http\Controllers\Backend\CountryController;
+use App\Http\Controllers\Backend\CustomerAddressController;
+use App\Http\Controllers\Backend\ProductController;
+use App\Http\Controllers\Backend\CustomerController;
+use App\Http\Controllers\Frontend\FrontendController;
+use App\Http\Controllers\Backend\SupervisorController;
+use App\Http\Controllers\Backend\ProductCouponController;
+use App\Http\Controllers\Backend\ProductReviewController;
+use App\Http\Controllers\Backend\ProductCategoriesController;
+use App\Http\Controllers\Backend\StateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,10 +63,33 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         //remove Image Products
         Route::post('products/remove-image', [ProductController::class, 'remove_image'])
             ->name('products.remove_image');
+        //remove Image Customer
+        Route::post('customers/remove-image', [CustomerController::class, 'remove_image'])
+            ->name('customers.remove_image');
+        //remove Image Supervisors
+        Route::post('supervisors/remove-image', [SupervisorController::class, 'remove_image'])
+            ->name('supervisors.remove_image');
+        //Get Customer For Search
+        Route::get('customers/get_customers', [CustomerController::class, 'get_customers'])
+            ->name('customers.get_customers');
+        //Get State For Customer
+        Route::get('states/get_states', [StateController::class, 'get_states'])
+            ->name('states.get_states');
+        //Get Cities For Customer
+        Route::get('cities/get_cities', [cityController::class, 'get_cities'])
+            ->name('cities.get_cities');
 
         // Route Resource
         Route::resource('product_categories',   ProductCategoriesController::class);
         Route::resource('products',             ProductController::class);
         Route::resource('tags',                 TagController::class);
+        Route::resource('product_coupons',      ProductCouponController::class);
+        Route::resource('product_reviews',      ProductReviewController::class);
+        Route::resource('customers',            CustomerController::class);
+        Route::resource('supervisors',          SupervisorController::class);
+        Route::resource('countries',            CountryController::class);
+        Route::resource('states',               StateController::class);
+        Route::resource('cities',               CityController::class);
+        Route::resource('customer_addresses',   CustomerAddressController::class);
     });
 });
